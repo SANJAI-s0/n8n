@@ -1,0 +1,208 @@
+{
+  "name": "🤖Email Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9d7f4cd7-aecd-47cc-a4ec-a110a7370e49",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "sendTo": "neuronest.app@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        300,
+        220
+      ],
+      "id": "762b8519-a8fc-4d50-902a-41b163b0849c",
+      "name": "Send",
+      "webhookId": "18c2b6cd-41b9-473d-922c-3bcb075c794b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BSt3rXbVOAid0e7L",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 5,
+        "filters": {
+          "readStatus": "unread"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        420,
+        200
+      ],
+      "id": "1dfd7fe0-3519-4468-920b-42f1897fbfa8",
+      "name": "Unread",
+      "webhookId": "79051207-391e-4140-b543-bb89a4c6ae09",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BSt3rXbVOAid0e7L",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "15b2aa42-d846-40d6-8bf3-45fa0599cd28",
+      "name": "Email"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        540,
+        200
+      ],
+      "id": "771620cc-2326-49c3-aeea-b910f920642e",
+      "name": "Reply",
+      "webhookId": "ce5e6684-f56a-403a-bf4c-e9749da45150",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BSt3rXbVOAid0e7L",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        200
+      ],
+      "id": "898e53c6-4c4e-4944-86d3-ea50d1cec25a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "4PE2Fv5aMGyMm3fE",
+          "name": "OpenAi account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When Executed by Another Workflow": [
+      {
+        "json": {
+          "query": "Send an email to neuronest.app@gmail.com asking for a status update."
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unread": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "94a642bb-8d90-4f7f-9b5f-7874f8a94a4a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4cd4aa468c9329fbeb04557473e474f93628c2d11446948a2f243e4da9d428a4"
+  },
+  "id": "HB2jGXUkEJCkccGr",
+  "tags": []
+}

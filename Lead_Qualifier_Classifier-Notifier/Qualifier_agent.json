@@ -1,0 +1,204 @@
+{
+  "name": "Qualifier agent",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "Lead Name"
+            },
+            {
+              "name": "Email"
+            },
+            {
+              "name": "Message"
+            },
+            {
+              "name": "Company Information"
+            },
+            {
+              "name": "Qualified",
+              "type": "boolean"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -460,
+        -20
+      ],
+      "id": "f26da381-28b5-4990-9c48-23fa686104dc",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=We have a new inbound lead and we need you to classify it into either SaaS or development agency category.\n\nHere is the lead information:\nName: {{ $json['Lead Name'] }}\nRequest: {{ $json.Message }}\nCompany Information: \n{{ $json['Company Information'] }}\n\nIf the lead a SaaS company, output 'SaaS'\nIf the lead is a development agency, output 'Agency'"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -240,
+        -20
+      ],
+      "id": "7eda797d-00ef-472c-b50b-55fd4c70fbf7",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "DPnaveRjIJgrOwDa",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "1def3cfa-911f-4dbf-9a48-7e1c2e57e0a2",
+              "leftValue": "={{ $json.message.content }}",
+              "rightValue": "Agency",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        140,
+        -20
+      ],
+      "id": "adfae643-d35f-4a77-9ad1-66dde992683d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "admin@liamottley.com",
+        "subject": "New Agency Lead",
+        "emailType": "text",
+        "message": "=New agency lead man!! Go gettem: {{ $('When Executed by Another Workflow').item.json['Company Information'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        420,
+        -140
+      ],
+      "id": "7fcb2b67-d65f-4fa2-97ca-dc48a85e1d71",
+      "name": "New Agency Lead",
+      "webhookId": "cc2cd647-90af-470a-a428-6adfc60efe96",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SJSX3MZ7a8VXvAgj",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "admin@liamottley.com",
+        "subject": "New SaaS Lead",
+        "emailType": "text",
+        "message": "=New agency lead man!! Go gettem: {{ $('When Executed by Another Workflow').item.json['Company Information'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        420,
+        80
+      ],
+      "id": "4ac80834-f3e6-413f-9eb2-5090bbacba64",
+      "name": "New SaaS Lead",
+      "webhookId": "cc2cd647-90af-470a-a428-6adfc60efe96",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SJSX3MZ7a8VXvAgj",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "New Agency Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "New SaaS Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "02ef472c-89a4-43cd-a9c1-04d0b78ba3af",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c677f00aab98aa760c3c6bf0c9041a07b1bb839f44d30005040b18d835ee109a"
+  },
+  "id": "legCHC5taxLPoZ2A",
+  "tags": []
+}

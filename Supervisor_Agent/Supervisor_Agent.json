@@ -1,0 +1,356 @@
+{
+  "name": "🤖 Supervisor Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "93e14330-0e8d-47b2-bfc3-7d0f17c60f44",
+      "name": "When chat message received",
+      "webhookId": "e3d83ac5-430c-42f2-8647-01bc59541657"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        140,
+        220
+      ],
+      "id": "76515aa1-27d3-44de-a3d1-5d83f81b4a39",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        280,
+        220
+      ],
+      "id": "d8f60fa3-8fb6-4a76-8099-ab9b058e09aa",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "DVCDvKABpb450NMD",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are Max, an AI agent. Your role is to coordinate activities between different agents and tools by determining the correct sequence of steps. Some tools may require outputs from other tools, so think about dependencies before proceeding. Your task is to respond to Lifa with a helpful, friendly message. Do not write content, summaries, or emails yourself—only orchestrate the process and guide the user. The current date and time is {{ $now.toString() }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "56452f5f-fa26-4e49-b886-cda3b4ad3284",
+      "name": "Supervisor"
+    },
+    {
+      "parameters": {
+        "description": "=Use this tool for any email related actions",
+        "workflowId": {
+          "__rl": true,
+          "value": "HB2jGXUkEJCkccGr",
+          "mode": "list",
+          "cachedResultName": "🤖Email Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        220
+      ],
+      "id": "19107d24-f657-4da0-8f88-8dd1adc87502",
+      "name": "Email"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -120,
+        220
+      ],
+      "id": "30b936d1-5f87-4ee3-96ea-36c5fdff848e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "W9dZ44IaOfd5xKpP",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        20,
+        220
+      ],
+      "id": "f236dde6-beca-4c03-b1cf-b31abcf23781",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "description": "Use this tool for all contacts related",
+        "workflowId": {
+          "__rl": true,
+          "value": "sTr5l3gnZm1N4LBb",
+          "mode": "list",
+          "cachedResultName": "🤖Contacts Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        520,
+        220
+      ],
+      "id": "faf07e49-7b6f-49b2-9e1f-ec4aeb99c82e",
+      "name": "Contacts"
+    },
+    {
+      "parameters": {
+        "description": "Use this tool for any calendar related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "9thvgnLwevEUkmmA",
+          "mode": "list",
+          "cachedResultName": "🤖Calendar Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        640,
+        220
+      ],
+      "id": "ccc08486-285e-4535-842a-c42ca2889b41",
+      "name": "Calender"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "KnowledgeBase",
+        "toolDescription": "Use this tool when asked questions from our own knowledge base",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n",
+          "mode": "list",
+          "cachedResultName": "n8n"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.1,
+      "position": [
+        760,
+        160
+      ],
+      "id": "2fd41973-f097-4667-b948-2c93e4d89444",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "tfeJJN7ZLRNqp5UO",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        860,
+        297.2094206321896
+      ],
+      "id": "8b087786-f015-4832-af03-fd0df379ea33",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "oYDjoMHxEBfhqqXb",
+          "name": "OpenAi account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calender": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "64d473e4-be5a-4fda-9c53-5c9e2769bd3c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4cd4aa468c9329fbeb04557473e474f93628c2d11446948a2f243e4da9d428a4"
+  },
+  "id": "HOWtDRGEwkwyRyFQ",
+  "tags": []
+}
